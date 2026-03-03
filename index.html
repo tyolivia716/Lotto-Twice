@@ -69,38 +69,37 @@
     transform: translateY(-5px) scale(1.1);
   }
 
-  /* ================== 手機版自適應 (Media Query) ================== */
-  /* ================== 手機版自適應 (Media Query) ================== */
+/* ================== 手機版自適應 (完全符合草圖) ================== */
 @media (max-width: 768px) {
   body {
-    /* 1. background-size 改為 70% (可依喜好調整為 80% 等)，讓圖片縮小 */
-    /* 2. 改為 center bottom，讓成員出現在轉盤下方 */
-    background: #000 url("twice-i-got-you-phone.jpg") center bottom / 10% no-repeat scroll;
+    /* 1. 使用 100% 確保寬度剛好滿，不裁切左右的人 */
+    /* 2. 使用 bottom 讓照片貼齊手機底部，人就會出現在最下面 */
+    background: #000 url("twice-i-got-you-phone.jpg") center bottom / 100% no-repeat fixed;
   }
 
   .overlay {
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    margin: 20px 0;
-    /* 稍微增加透明度，這樣背景的人臉會更清楚 */
-    background: rgba(0, 0, 0, 0.75); 
+    margin-top: 10px;      /* 讓轉盤往上一點 */
+    margin-bottom: 40vh;   /* 關鍵！下方留出空間，讓背景的 9 個人露出來 */
+    background: rgba(0, 0, 0, 0.6); /* 降低透明度，背景人臉更清晰 */
+    width: 90%;
   }
-
-  .left, .right { 
-    width: 100%; 
-  }
-
-  h1 { font-size: 18px; }
 
   canvas {
-    width: 80vw;
-    height: 80vw;
-    max-width: 350px;
+    width: 75vw;           /* 稍微縮小轉盤，確保上方空間足夠 */
+    height: 75vw;
+    max-width: 300px;
+  }
+
+  .Lovely-row {
+    margin-top: 10px;
+    gap: 4px;              /* 縮小 Lovely 的間距，讓他們排成一橫列 */
   }
 
   .Lovely-row img {
-    height: 45px;
+    height: 35px;          /* 縮小 Lovely 大小，符合你草圖的比例 */
   }
 }
 
@@ -704,5 +703,3 @@ body {
   </script>
 </body>
 </html>
-
-
