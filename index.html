@@ -4,70 +4,113 @@
   <meta charset="UTF-8" />
   <title>轉盤隨機抽獎</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  background-image: url("twice-i-got-you.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* 手機版 */
-@media (max-width: 768px) {
-  body {
-    background-image: url("twice-i-got-you-phone.jpg");
-    background-attachment: scroll; /* 手機不要 fixed，比較順 */
+  * {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
   }
-}
+
+  /* 基礎 body 設定：預設為電腦版 */
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 電腦背景圖 */
+    background: #000 url("twice-i-got-you.jpg") center / cover no-repeat fixed;
+    transition: background 0.3s ease;
+  }
+
+  /* 遮罩層 */
+  .overlay {
+    background: rgba(0, 0, 0, 0.88);
+    padding: 24px;
+    border-radius: 18px;
+    display: flex;
+    gap: 24px;
+    color: #fff;
+    max-width: 1100px;
+    width: 95%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+
+  .left, .right {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 轉盤畫布 */
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Lovelys 容器：改為自然排版 */
+  .Lovely-row {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .Lovely-row img {
+    height: 60px; /* 電腦版高度 */
+    width: auto;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.2s;
+  }
+  
+  .Lovely-row img:hover {
+    transform: translateY(-5px) scale(1.1);
+  }
+
+  /* ================== 手機版自適應 (Media Query) ================== */
+  @media (max-width: 768px) {
+    body {
+      /* 手機背景圖：改為直式圖，並取消 fixed 避免手機瀏覽器卡頓 */
+      background: #000 url("twice-i-got-you-phone.jpg") center top / cover no-repeat scroll;
+    }
 
     .overlay {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 24px;
-      border-radius: 18px;
-      display: flex;
-      gap: 24px;
-      color: #fff;
-      max-width: 1100px;
-      width: 95%;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      flex-direction: column; /* 左右變上下排列 */
+      align-items: center;
+      padding: 16px;
+      margin: 20px 0;
     }
 
-    .left, .right {
-      flex: 1;
-      min-width: 0;
+    .left, .right { 
+      width: 100%; 
     }
 
-    h1 {
-      margin-top: 0;
-      font-size: 22px;
-      text-align: center;
-    }
+    h1 { font-size: 18px; }
 
+    /* 讓轉盤在手機上不要太大 */
     canvas {
-      display: block;
-      margin: 0 auto;
-      background: rgba(0,0,0,0.25);
-      border-radius: 50%;
+      width: 80vw;
+      height: 80vw;
     }
 
-    .pointer {
-      width: 0;
-      height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-bottom: 26px solid #ffeb3b;
-      margin: 8px auto 0;
-      filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
+    .Lovely-row img {
+      height: 45px; /* 手機版 Lovely 縮小一點避免佔空間 */
     }
+  }
+
+  /* 其他通用元件樣式 (保持你原有的即可) */
+  .pointer {
+    width: 0; height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 22px solid #ffeb3b;
+    margin: 8px auto 0;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
+  }
+
+
 
     label {
       font-size: 13px;
