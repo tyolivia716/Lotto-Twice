@@ -72,15 +72,9 @@
 /* ================== 手機版自適應 (修正照片被推出去的問題) ================== */
 @media (max-width: 768px) {
   body {
-    /* 使用黑色背景補足照片縮小後的上下空隙 */
     background-color: #000;
-    /* 核心修改：100% 確保寬度剛好滿（不切左右），auto 讓高度隨比例縮放 */
-    /* 改用 center bottom 讓成員出現在手機最下方，不被轉盤壓住 */
-    background-image: url("twice-i-got-you-phone.jpg");
-    background-position: center bottom;
-    background-size: 100% auto; 
-    background-repeat: no-repeat;
-    background-attachment: scroll; /* 手機版建議用 scroll 避免定位跑掉 */
+    /* 確保寬度 100% 絕對不切到左右的人 */
+    background: #000 url("twice-i-got-you-phone.jpg") center bottom / 100% auto no-repeat scroll;
   }
 
   .overlay {
@@ -88,31 +82,33 @@
     align-items: center;
     padding: 16px;
     margin-top: 10px;
-    /* 增加下方邊距，強迫把轉盤區塊往上推，讓背景底部的成員露出來 */
-    margin-bottom: 55vh; 
-    background: rgba(0, 0, 0, 0.65); /* 稍微透明點，背景人臉更清楚 */
+    /* 留出下方空間讓成員露出來 */
+    margin-bottom: 50vh; 
+    background: rgba(0, 0, 0, 0.7); 
     width: 92%;
   }
 
-  canvas {
-    /* 縮小轉盤比例，騰出空間給背景成員 */
-    width: 70vw;
-    height: 70vw;
-    max-width: 300px;
-  }
-
+  /* 針對移到上方的 Lovely 設定 */
   .Lovely-row {
-    margin-top: 15px;
+    margin-top: 0;
+    margin-bottom: 10px; /* 跟標題保持距離 */
     gap: 4px;
     justify-content: center;
+    display: flex;
+    width: 100%;
   }
 
   .Lovely-row img {
-    height: 32px; /* 稍微縮小 Lovely，避免佔用太多垂直空間 */
+    height: 30px; /* 稍微縮小，讓 9 隻能排成漂亮的一橫列 */
     width: auto;
   }
+
+  canvas {
+    width: 70vw;
+    height: 70vw;
+  }
 }
-  /* 其他通用元件樣式 (保持你原有的即可) */
+   /* 其他通用元件樣式 (保持你原有的即可) */
   .pointer {
     width: 0; height: 0;
     border-left: 15px solid transparent;
@@ -352,7 +348,18 @@ body {
 <body>
   <div class="overlay">
     <div class="left">
-      <h1 id="pageTitle">轉盤隨機抽獎</h1>
+      <div class="Lovely-row">
+          <img src="1_NAVELY.png" alt="Lovely 1" />
+          <img src="2_JEONGVELY.png" alt="Lovely 2" />
+          <img src="3_MOVELY.png" alt="Lovely 3" />
+          <img src="4_SAVELY.png" alt="Lovely 4" />
+          <img src="5_JIVELY.png" alt="Lovely 5" />
+          <img src="6_MIVELY.png" alt="Lovely 6" />
+          <img src="7_DAVELY.png" alt="Lovely 7" />
+          <img src="8_CHAENGVELY.png" alt="Lovely 8" />
+          <img src="9_TZUVELY.png" alt="Lovely 9" />
+        </div>
+<h1 id="pageTitle">轉盤隨機抽獎</h1>
       <div class="pointer"></div>
       <canvas id="wheel" width="380" height="380"></canvas>
       <div class="status" id="statusText">請先設定抽獎名稱、獎品與參加者，按「套用設定」。</div>
@@ -411,17 +418,6 @@ body {
             <p style="opacity:.7;">尚無結果</p>
           </div>
           <img id="catImg" src="cat.png" alt="有票貓貓" />
-<div class="Lovely-row">
-          <img src="1_NAVELY.png" alt="Lovely 1" />
-          <img src="2_JEONGVELY.png" alt="Lovely 2" />
-          <img src="3_MOVELY.png" alt="Lovely 3" />
-          <img src="4_SAVELY.png" alt="Lovely 4" />
-          <img src="5_JIVELY.png" alt="Lovely 5" />
-          <img src="6_MIVELY.png" alt="Lovely 6" />
-          <img src="7_DAVELY.png" alt="Lovely 7" />
-          <img src="8_CHAENGVELY.png" alt="Lovely 8" />
-          <img src="9_TZUVELY.png" alt="Lovely 9" />
-        </div>
         </div>
       </div>
     </div>
