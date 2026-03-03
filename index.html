@@ -275,6 +275,15 @@ body {
     background-attachment: scroll;
   }
 }
+@media (max-width: 768px) {
+  body {
+    background-size: contain;      /* 顯示完整圖片 */
+    background-repeat: no-repeat;  /* 不要重複 */
+    background-position: center top; /* 置中偏上 */
+    background-attachment: scroll; /* 手機不要 fixed */
+    background-color: #000;        /* 補黑邊 */
+  }
+}
   </style>
 </head>
 <body>
