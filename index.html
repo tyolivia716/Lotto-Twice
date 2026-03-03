@@ -248,35 +248,49 @@
     max-width: 350px;
   }
 
-.Lovely-row {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 100px;
-}
-  body {
+body {
   margin: 0;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background-image: url("twice-i-got-you.jpg"); /* 桌機 */
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: #000 url("twice-i-got-you.jpg") center / cover no-repeat fixed;
 }
 
-/* 手機：不切人（A方案） */
+/* 手機版：用直式圖、顯示完整、黑邊補滿 */
 @media (max-width: 768px) {
   body {
-    background-image: url("twice-i-got-you-phone.jpg"); /* 手機直式 */
-    background-size: contain;       /* ✅ 完整顯示，不裁切 */
-    background-repeat: no-repeat;   /* ✅ 不重複 */
-    background-position: center top;
-    background-attachment: scroll;  /* ✅ 手機不要 fixed */
-    background-color: #000;         /* ✅ 空白補黑 */
+    background: #000 url("twice-i-got-you-phone.jpg") center top / contain no-repeat scroll;
   }
+
+  .overlay {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .left, .right { width: 100%; }
+
+  canvas {
+    width: 85vw;
+    height: 85vw;
+    max-width: 350px;
+  }
+}
+
+/* Lovely-row：不要 absolute，讓它自然排版 */
+.Lovely-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.Lovely-row img {
+  height: 70px;
+  width: auto;
 }
   </style>
 </head>
