@@ -248,21 +248,33 @@
     max-width: 350px;
   }
 
-  .Lovely-row {
-    position: static;
-    transform: none;
-    margin-top: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
+.Lovely-row {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100px;
+}
   body {
     background-attachment: scroll;
     background-position: top center;
   }
 }
 
+body {
+  background-image: url("twice-i-got-you.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
 
+@media (max-width: 768px) {
+  body {
+    background-image: url("twice-i-got-you-phone.jpg"); /* 直式版本 */
+    background-size: cover;
+    background-position: center top;
+    background-attachment: scroll;
+  }
+}
   </style>
 </head>
 <body>
