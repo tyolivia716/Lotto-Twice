@@ -15,19 +15,37 @@
       display: flex;
       align-items: center;
       justify-content: center;
-  background-image: url("twice-i-got-you.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
+      
+      /* 預設背景：電腦版 (橫向比例) */
+      background-image: url("twice-desktop.jpg"); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
 
-/* 手機版 */
-@media (max-width: 768px) {
-  body {
-    background-image: url("twice-i-got-you-phone.jpg");
-    background-attachment: scroll; /* 手機不要 fixed，比較順 */
-  }
-}
+    /* 當螢幕寬度小於 768px 時（手機模式） */
+    @media (max-width: 768px) {
+      body {
+        /* 手機版背景 (直向比例) */
+        background-image: url("twice-mobile.jpg"); 
+        
+        /* 手機版通常不建議用 fixed，因為部分瀏覽器會有抖動問題 */
+        background-attachment: scroll; 
+      }
+      
+      .overlay {
+        flex-direction: column; /* 手機版讓左右區塊變成上下排列 */
+        width: 98%;
+        padding: 15px;
+        gap: 15px;
+      }
+      
+      canvas {
+        width: 100% !important; /* 讓轉盤隨螢幕縮小 */
+        height: auto !important;
+      }
+    }
 
     .overlay {
       background: rgba(0, 0, 0, 0.85);
@@ -601,3 +619,4 @@
   </script>
 </body>
 </html>
+
