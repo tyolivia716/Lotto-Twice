@@ -15,11 +15,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-image: url("twice-i-got-you.jpg"); /* 換背景圖時改這裡 */
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-    }
+  background-image: url("twice-i-got-you.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 手機版 */
+@media (max-width: 768px) {
+  body {
+    background-image: url("twice-i-got-you-phone.jpg");
+    background-attachment: scroll; /* 手機不要 fixed，比較順 */
+  }
+}
 
     .overlay {
       background: rgba(0, 0, 0, 0.85);
