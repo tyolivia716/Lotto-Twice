@@ -70,35 +70,39 @@
   }
 
   /* ================== 手機版自適應 (Media Query) ================== */
-  @media (max-width: 768px) {
+  /* ================== 手機版自適應 (Media Query) ================== */
+@media (max-width: 768px) {
   body {
-    background: #000 url("twice-i-got-you-phone.jpg") center top / contain no-repeat scroll; /* 完整顯示照片，靠上排列 */
+    /* 1. background-size 改為 90% (可依喜好調整為 80% 等)，讓圖片縮小 */
+    /* 2. 改為 center bottom，讓成員出現在轉盤下方 */
+    background: #000 url("twice-i-got-you-phone.jpg") center bottom / 90% no-repeat scroll;
+  }
+
+  .overlay {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    margin: 20px 0;
+    /* 稍微增加透明度，這樣背景的人臉會更清楚 */
+    background: rgba(0, 0, 0, 0.75); 
+  }
+
+  .left, .right { 
+    width: 100%; 
+  }
+
+  h1 { font-size: 18px; }
+
+  canvas {
+    width: 80vw;
+    height: 80vw;
+    max-width: 350px;
+  }
+
+  .Lovely-row img {
+    height: 45px;
   }
 }
-
-    .overlay {
-      flex-direction: column; /* 左右變上下排列 */
-      align-items: center;
-      padding: 16px;
-      margin: 20px 0;
-    }
-
-    .left, .right { 
-      width: 100%; 
-    }
-
-    h1 { font-size: 18px; }
-
-    /* 讓轉盤在手機上不要太大 */
-    canvas {
-      width: 80vw;
-      height: 80vw;
-    }
-
-    .Lovely-row img {
-      height: 45px; /* 手機版 Lovely 縮小一點避免佔空間 */
-    }
-  }
 
   /* 其他通用元件樣式 (保持你原有的即可) */
   .pointer {
