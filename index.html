@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>轉盤隨機抽獎</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url("twice-i-got-you.jpg"); /* 換背景圖時改這裡 */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 24px;
+      border-radius: 18px;
+      display: flex;
+      gap: 24px;
+      color: #fff;
+      max-width: 1100px;
+      width: 95%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    }
+
+    .left, .right {
+      flex: 1;
+      min-width: 0;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: rgba(0,0,0,0.25);
+      border-radius: 50%;
+    }
+
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 26px solid #ffeb3b;
+      margin: 8px auto 0;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
+    }
+
+    label {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border-radius: 10px;
+      border: none;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #ffeb3b;
+      color: #333;
+      font-weight: 600;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    button.secondary {
+      background: #ffffff22;
+      color: #fff;
+      border: 1px solid #ffffff55;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .section {
+      margin-bottom: 10px;
+    }
+
+    .result-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 6px;
+    }
+
+    .result-box {
+      flex: 1;
+      max-height: 180px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.35);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .result-box p {
+      margin: 4px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #ffeb3b;
+      color: #333;
+      margin-right: 4px;
+    }
+
+    .status {
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: 0.9;
+      text-align: center;
+    }
+
+    .hint {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    #catImg {
+      max-width: 120px;
+      display: none;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
+    }
+
+    .congrats-text {
+      margin-top: 6px;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .mode-row {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      margin: 4px 0 6px;
+      flex-wrap: wrap;
+    }
+
+    .mode-row label {
+      opacity: 1;
+    }
+
+    .Lovely-row {
+      margin-top: 8px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .Lovely-row img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+.Lovely-row {
+  position: absolute;
+  left: 50%;                 /* 水平置中 */
+  transform: translateX(-50%); /* 精準置中 */
+  bottom: 100px;             /* 貼在黑色框框下方，依 Lovely 高度可調 */
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.Lovely-row img {
+  height: 70px;              /* 保持自然比例，可自行調整大小 */
+  width: auto;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="left">
+      <h1 id="pageTitle">轉盤隨機抽獎</h1>
+      <div class="pointer"></div>
+      <canvas id="wheel" width="380" height="380"></canvas>
+      <div class="status" id="statusText">請先設定抽獎名稱、獎品與參加者，按「套用設定」。</div>
+      <div class="btn-row" style="justify-content:center; margin-top:10px;">
+        <button id="spinBtn" disabled>🎯 開始抽獎（一次抽完所有獎品）</button>
+        <button id="resetBtn" class="secondary">重置結果</button>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="section">
+        <label for="drawTitle">此次抽獎名稱：</label>
+        <input id="drawTitle" type="text" placeholder="例如：TWICE 娃衣抽獎" />
+        <div class="hint">說明：會顯示在轉盤上方的大標題，也會套用到瀏覽器分頁標題。</div>
+      </div>
+
+      <div class="section">
+        <label for="prizes">獎品清單（一行一個）：</label>
+        <textarea id="prizes" placeholder="例如：&#10;一獎：簽名小卡&#10;二獎：應援扇&#10;三獎：照片組"></textarea>
+        <div class="hint">說明：有幾行獎品，就會抽出幾位中獎者。</div>
+      </div>
+
+      <div class="section">
+        <label>參加者設定：</label>
+        <div class="mode-row">
+          <label>
+            <input type="radio" name="participantMode" value="manual" checked />
+            手動輸入名單
+          </label>
+          <label>
+            <input type="radio" name="participantMode" value="count" />
+            輸入人數自動產生 1~N 號
+          </label>
+        </div>
+
+        <div id="manualBox">
+          <textarea id="participants" placeholder="例如：&#10;sana&#10;mina&#10;justin&#10;sharon&#10;once"></textarea>
+          <div class="hint">說明：轉盤上的文字會顯示這裡的名字或號碼，每個人只會中一次。</div>
+        </div>
+
+        <div id="countBox" style="display:none;">
+          <label for="participantCount">參加人數：</label>
+          <input id="participantCount" type="number" min="1" value="10" />
+          <div class="hint">說明：會自動產生「1號～N號」作為參加者。</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="applyBtn">套用設定</button>
+      </div>
+
+      <div class="section">
+        <label>中獎結果：</label>
+        <div class="result-wrapper">
+          <div class="result-box" id="resultBox">
+            <p style="opacity:.7;">尚無結果</p>
+          </div>
+          <img id="catImg" src="cat.png" alt="有票貓貓" />
+<div class="Lovely-row">
+          <img src="1_NAVELY.png" alt="Lovely 1" />
+          <img src="2_JEONGVELY.png" alt="Lovely 2" />
+          <img src="3_MOVELY.png" alt="Lovely 3" />
+          <img src="4_SAVELY.png" alt="Lovely 4" />
+          <img src="5_JIVELY.png" alt="Lovely 5" />
+          <img src="6_MIVELY.png" alt="Lovely 6" />
+          <img src="7_DAVELY.png" alt="Lovely 7" />
+          <img src="8_CHAENGVELY.png" alt="Lovely 8" />
+          <img src="9_TZUVELY.png" alt="Lovely 9" />
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const applyBtn = document.getElementById("applyBtn");
+    const statusText = document.getElementById("statusText");
+    const resultBox = document.getElementById("resultBox");
+    const catImg = document.getElementById("catImg");
+    const drawTitleInput = document.getElementById("drawTitle");
+    const pageTitleEl = document.getElementById("pageTitle");
+
+    // 中心吐彩虹貓圖
+    const centerImg = new Image();
+    centerImg.src = "apple_rainbow.png"; // 記得準備這張圖
+    let centerImgLoaded = false;
+    centerImg.onload = () => {
+      centerImgLoaded = true;
+      drawWheel();
+    };
+
+    let prizes = [];
+    let participants = [];
+    let remainingPrizes = [];
+    let remainingParticipants = [];
+    let isDrawing = false;
+    let rotation = 0; // 目前角度（弧度）
+
+    // 參加者模式顯示切換
+    const manualBox = document.getElementById("manualBox");
+    const countBox = document.getElementById("countBox");
+    const participantModeRadios = document.querySelectorAll('input[name="participantMode"]');
+
+    participantModeRadios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        const mode = document.querySelector('input[name="participantMode"]:checked').value;
+        if (mode === "manual") {
+          manualBox.style.display = "";
+          countBox.style.display = "none";
+        } else {
+          manualBox.style.display = "none";
+          countBox.style.display = "";
+        }
+      });
+    });
+
+    // 套用設定
+    applyBtn.addEventListener("click", () => {
+      const prizeLines = document.getElementById("prizes").value
+        .split("\n").map(s => s.trim()).filter(s => s !== "");
+
+      // 抽獎名稱
+      const customTitle = drawTitleInput.value.trim();
+      if (customTitle) {
+        pageTitleEl.textContent = customTitle;
+        document.title = customTitle;
+      } else {
+        pageTitleEl.textContent = "轉盤隨機抽獎";
+        document.title = "轉盤隨機抽獎";
+      }
+
+      // 參加者來源：手動或人數
+      const mode = document.querySelector('input[name="participantMode"]:checked').value;
+      let participantLines = [];
+
+      if (mode === "manual") {
+        participantLines = document.getElementById("participants").value
+          .split("\n").map(s => s.trim()).filter(s => s !== "");
+      } else {
+        const countValue = parseInt(document.getElementById("participantCount").value, 10);
+        if (isNaN(countValue) || countValue <= 0) {
+          alert("請輸入正確的參加人數。");
+          return;
+        }
+        participantLines = Array.from({ length: countValue }, (_, i) => `${i + 1}號`);
+      }
+
+      if (prizeLines.length === 0) {
+        alert("請至少輸入一個獎品。");
+        return;
+      }
+      if (participantLines.length === 0) {
+        alert("請至少輸入一個參加者。");
+        return;
+      }
+      if (participantLines.length < prizeLines.length) {
+        alert("參加者數量必須大於或等於獎品數量。");
+        return;
+      }
+
+      prizes = prizeLines;
+      participants = participantLines;
+      remainingPrizes = [...prizes];
+      remainingParticipants = [...participants];
+      rotation = 0;
+      drawWheel();
+
+      spinBtn.disabled = false;
+      catImg.style.display = "none";
+      statusText.textContent = "設定完成，可以開始抽獎囉！";
+      resultBox.innerHTML = '<p style="opacity:.7;">尚無結果</p>';
+    });
+
+    // 畫轉盤（顯示的是參加者）
+    function drawWheel() {
+      const count = remainingParticipants.length;
+      const { width, height } = canvas;
+      const cx = width / 2;
+      const cy = height / 2;
+      const radius = Math.min(cx, cy) - 8;
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (count === 0) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.fillStyle = "#ffffffcc";
+        ctx.textAlign = "center";
+        ctx.font = "18px 'Noto Sans TC'";
+        ctx.fillText("沒有人可以抽了 😹", 0, 0);
+        ctx.restore();
+        return;
+      }
+
+      const anglePer = (Math.PI * 2) / count;
+
+      for (let i = 0; i < count; i++) {
+        const startAngle = rotation + i * anglePer;
+        const endAngle = startAngle + anglePer;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.closePath();
+
+        // Lovely 低飽和九色
+        const colors = [
+          "#8FB8C0", // 
+          "#C3CF9C", // 
+          "#E1B1B8", // 
+          "#B4A9CF", // 
+          "#E2CFA9" , //
+          "#A6C9C4", //
+          "#CFC6BE", //
+          "#B96A72", //
+          "#7A9EAD", // 
+        ];
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,0.85)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        const textAngle = startAngle + anglePer / 2;
+        ctx.rotate(textAngle);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "14px 'Noto Sans TC'";
+        ctx.fillText(remainingParticipants[i], radius - 10, 5);
+        ctx.restore();
+      }
+
+      // 中心：吐彩虹蘋果貓
+      if (centerImgLoaded) {
+        const centerSize = radius * 0.6; // 中心圖大小
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, centerSize / 2, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(centerImg, cx - centerSize / 2, cy - centerSize / 2, centerSize, centerSize);
+        ctx.restore();
+      } else {
+        // 圖還沒載完時的備用圈圈
+        ctx.beginPath();
+        ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fill();
+        ctx.fillStyle = "#ffeb3b";
+        ctx.font = "16px 'Noto Sans TC'";
+        ctx.textAlign = "center";
+        ctx.fillText("抽獎", cx, cy + 5);
+      }
+    }
+
+    // 轉一次盤，抽出一個得獎者（對應一個獎品）
+    function spinOnceForPrize(prizeName) {
+      return new Promise((resolve) => {
+        const count = remainingParticipants.length;
+        const anglePer = (Math.PI * 2) / count;
+
+        // 隨機決定這一輪停在哪一個人
+        const targetIndex = Math.floor(Math.random() * count);
+        const targetAngle = (Math.PI / 2) - (targetIndex * anglePer) - anglePer / 2; // 指針在上方
+
+        const baseRotations = Math.PI * 2 * 5;
+        const finalRotation = baseRotations + targetAngle;
+
+        const duration = 2200;
+        const start = performance.now();
+        const initialRotation = rotation;
+
+        function animate(now) {
+          const elapsed = now - start;
+          const t = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          rotation = initialRotation + (finalRotation - initialRotation) * ease;
+          drawWheel();
+
+          if (t < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            rotation = finalRotation % (Math.PI * 2);
+            drawWheel();
+
+            // 動畫結束，選出得獎者
+            const winner = remainingParticipants.splice(targetIndex, 1)[0];
+            resolve({ prize: prizeName, winner });
+          }
+        }
+
+        requestAnimationFrame(animate);
+      });
+    }
+
+    // 開始抽獎：一次抽完所有獎品
+    async function startDraw() {
+      if (isDrawing) return;
+      if (remainingPrizes.length === 0) {
+        alert("沒有可抽的獎品。");
+        return;
+      }
+      if (remainingParticipants.length < remainingPrizes.length) {
+        alert("參加者數量不足以分配所有獎品。");
+        return;
+      }
+
+      isDrawing = true;
+      spinBtn.disabled = true;
+      catImg.style.display = "none";
+      if (resultBox.innerHTML.includes("尚無結果")) {
+        resultBox.innerHTML = "";
+      }
+
+      statusText.textContent = "蘋果貓貓努力幫你抽獎中…";
+
+      const currentPrizes = [...remainingPrizes];
+      remainingPrizes = []; // 抽獎視為這一輪獎品全部用掉
+
+      for (let i = 0; i < currentPrizes.length; i++) {
+        const prizeName = currentPrizes[i];
+        const { prize, winner } = await spinOnceForPrize(prizeName);
+
+        const p = document.createElement("p");
+        p.innerHTML = `<span class="badge">🎁 ${prize}</span> ➜ <strong>${winner}</strong>`;
+        resultBox.appendChild(p);
+
+        statusText.textContent = `抽中：${prize} ➜ ${winner}`;
+        await new Promise(r => setTimeout(r, 300)); // 每輪之間稍微停一下
+      }
+
+      statusText.textContent = "🎉恭喜所有中獎者喵喵喵喵喵喵喵🎉";
+      catImg.style.display = "block";
+      isDrawing = false;
+    }
+
+    spinBtn.addEventListener("click", startDraw);
+
+    resetBtn.addEventListener("click", () => {
+      remainingPrizes = [...prizes];
+      remainingParticipants = [...participants];
+      rotation = 0;
+      drawWheel();
+      resultBox.innerHTML = '<p style="opacity:.7;">尚無結果</p>';
+      statusText.textContent = "已重置結果，可以重新開始抽。";
+      catImg.style.display = "none";
+      spinBtn.disabled = remainingPrizes.length === 0 || remainingParticipants.length === 0;
+    });
+
+    // 初始畫面
+    drawWheel();
+  </script>
+</body>
+</html>
