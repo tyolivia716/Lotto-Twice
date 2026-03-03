@@ -69,40 +69,49 @@
     transform: translateY(-5px) scale(1.1);
   }
 
-/* ================== 手機版自適應 (完全符合草圖) ================== */
+/* ================== 手機版自適應 (修正照片被推出去的問題) ================== */
 @media (max-width: 768px) {
   body {
-    /* 1. 使用 100% 確保寬度剛好滿，不裁切左右的人 */
-    /* 2. 使用 bottom 讓照片貼齊手機底部，人就會出現在最下面 */
-    background: #000 url("twice-i-got-you-phone.jpg") center bottom / 100% no-repeat fixed;
+    /* 使用黑色背景補足照片縮小後的上下空隙 */
+    background-color: #000;
+    /* 核心修改：100% 確保寬度剛好滿（不切左右），auto 讓高度隨比例縮放 */
+    /* 改用 center bottom 讓成員出現在手機最下方，不被轉盤壓住 */
+    background-image: url("twice-i-got-you-phone.jpg");
+    background-position: center bottom;
+    background-size: 100% auto; 
+    background-repeat: no-repeat;
+    background-attachment: scroll; /* 手機版建議用 scroll 避免定位跑掉 */
   }
 
   .overlay {
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    margin-top: 10px;      /* 讓轉盤往上一點 */
-    margin-bottom: 40vh;   /* 關鍵！下方留出空間，讓背景的 9 個人露出來 */
-    background: rgba(0, 0, 0, 0.6); /* 降低透明度，背景人臉更清晰 */
-    width: 90%;
+    margin-top: 10px;
+    /* 增加下方邊距，強迫把轉盤區塊往上推，讓背景底部的成員露出來 */
+    margin-bottom: 55vh; 
+    background: rgba(0, 0, 0, 0.65); /* 稍微透明點，背景人臉更清楚 */
+    width: 92%;
   }
 
   canvas {
-    width: 75vw;           /* 稍微縮小轉盤，確保上方空間足夠 */
-    height: 75vw;
+    /* 縮小轉盤比例，騰出空間給背景成員 */
+    width: 70vw;
+    height: 70vw;
     max-width: 300px;
   }
 
   .Lovely-row {
-    margin-top: 10px;
-    gap: 4px;              /* 縮小 Lovely 的間距，讓他們排成一橫列 */
+    margin-top: 15px;
+    gap: 4px;
+    justify-content: center;
   }
 
   .Lovely-row img {
-    height: 35px;          /* 縮小 Lovely 大小，符合你草圖的比例 */
+    height: 32px; /* 稍微縮小 Lovely，避免佔用太多垂直空間 */
+    width: auto;
   }
 }
-
   /* 其他通用元件樣式 (保持你原有的即可) */
   .pointer {
     width: 0; height: 0;
